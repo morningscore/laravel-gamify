@@ -71,13 +71,14 @@ trait HasReputations
      * Give point to a user
      *
      * @param int $point
+     * @param boolean $dispatch
      * @return HasReputations
      */
-    public function addPoint($point = 1)
+    public function addPoint($point = 1, $dispatch = true)
     {
         $this->increment($this->getReputationField(), $point);
 
-        ReputationChanged::dispatch($this, $point, true);
+        if ($dispatch) ReputationChanged::dispatch($this, $point, true);
 
         return $this;
     }
@@ -86,13 +87,14 @@ trait HasReputations
      * Reduce a user point
      *
      * @param int $point
+     * @param boolean $dispatch
      * @return HasReputations
      */
-    public function reducePoint($point = 1)
+    public function reducePoint($point = 1, $dispatch = true)
     {
         $this->decrement($this->getReputationField(), $point);
 
-        ReputationChanged::dispatch($this, $point, false);
+        if ($dispatch) ReputationChanged::dispatch($this, $point, false);
 
         return $this;
     }
@@ -100,13 +102,14 @@ trait HasReputations
     /**
      * Reset a user point to zero
      *
+     * @param boolean $dispatch
      * @return mixed
      */
-    public function resetPoint()
+    public function resetPoint($dispatch = true)
     {
         $this->forceFill([$this->getReputationField() => 0])->save();
 
-        ReputationChanged::dispatch($this, 0, false);
+        if ($dispatch) ReputationChanged::dispatch($this, 0, false);
 
         return $this;
     }
