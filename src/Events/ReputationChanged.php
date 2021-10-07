@@ -16,7 +16,7 @@ class ReputationChanged implements ShouldBroadcast
     /**
      * @var Model
      */
-    public $user;
+    public $userId;
 
     /**
      * @var int
@@ -49,7 +49,11 @@ class ReputationChanged implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        $channelName = config('gamify.channel_name') . $this->user->getKey();
+        $model = config('gamify.payee_model');
+
+        $user= $model::where('id', $this->userId)->first();
+
+        $channelName = config('gamify.channel_name') . $user->getKey();
 
         if (config('gamify.broadcast_on_private_channel')) {
             return new PrivateChannel($channelName);
