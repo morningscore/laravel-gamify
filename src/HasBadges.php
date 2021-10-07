@@ -24,10 +24,29 @@ trait HasBadges
     {
         $user = is_null($user) ? $this : $user;
 
-        $badgeIds = app('badges')->filter
-            ->qualifier($user)
-            ->map->getBadgeId();
+        $badgeIds = [];
+
+        $badges = app('badges')->sort(function($a, $b) {
+            return ($a->getLevel() < $b->getLevel()) ? -1 : 1;
+        });
+
+        $syncAgain = false;
+
+        foreach ($badges as $badge) {
+            if ($syncAgain)
+                break;
+
+            $qualifier = $badge->qualifier($user);
+            if ($qualifier) {
+                array_push($badgeIds, $badge->getBadgeId());
+
+                if ($qualifier === 2)
+                    $syncAgain = true;
+            }
+        }
 
         $user->badges()->sync($badgeIds);
+
+        if ($syncAgain) $this->syncBadges($user);
     }
 }
