@@ -14,6 +14,10 @@ class SyncBadges
      */
     public function handle(ReputationChanged $event)
     {
-        $event->user->syncBadges();
+        $model = config('gamify.payee_model');
+
+        $user= $model::where('id', $event->userId)->first();
+
+        $user->syncBadges();
     }
 }

@@ -37,7 +37,7 @@ class ReputationChanged implements ShouldBroadcast
      */
     public function __construct(Model $user, int $point, bool $increment)
     {
-        $this->user = $user;
+        $this->userId = $user->id;
         $this->point = $point;
         $this->increment = $increment;
     }
